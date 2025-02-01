@@ -50,3 +50,16 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time" % "2.9.3"
 
 )
+
+Compile / mainClass := Some("Main")
+assembly / mainClass := Some("Main")
+
+assembly / assemblyMergeStrategy := {
+  case PathList("META-INF", "maven", "org.webjars", "swagger-ui", "pom.properties") => MergeStrategy.first
+  case PathList("META-INF", "io.netty.versions.properties") => MergeStrategy.first
+  //  case "pom.properties" => MergeStrategy.first
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+  case x => MergeStrategy.first
+}
+
+assembly / assemblyJarName := "travel-designer.jar"
