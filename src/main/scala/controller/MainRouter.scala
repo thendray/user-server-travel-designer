@@ -2,10 +2,10 @@ package controller
 
 import sttp.model.StatusCode
 import sttp.tapir.json.circe.jsonBody
-import sttp.tapir.ztapir._
-import zio.{ULayer, ZIO, ZLayer}
+import sttp.tapir.ztapir.{ZServerEndpoint, _}
+import zio.{URLayer, ZIO, ZLayer}
 
-class MainRouter {
+class MainRouter(userRoutes: UserRoutes) {
 
   private val defaultRoute = "api" / "user" / "v1"
 
@@ -28,6 +28,6 @@ class MainRouter {
 
 object MainRouter {
 
-  val live: ULayer[MainRouter] = ZLayer.fromFunction(() => new MainRouter())
+  val live: URLayer[UserRoutes, MainRouter] = ZLayer.fromFunction(new MainRouter(_))
 
 }
