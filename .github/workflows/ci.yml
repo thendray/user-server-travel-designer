@@ -22,9 +22,10 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'sbt'
+        sbt-version: '1.5.5' 
 
-    # - name: Run tests
-    #   run: sbt test
+    - name: Run tests
+      run: sbt test
 
     - name: Build Scala project
       run: sbt assembly
