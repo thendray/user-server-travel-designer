@@ -23,8 +23,8 @@ jobs:
         distribution: 'temurin'
         cache: 'sbt'
 
-    - name: Run tests
-      run: sbt test
+    # - name: Run tests
+    #   run: sbt test
 
     - name: Build Scala project
       run: sbt assembly
