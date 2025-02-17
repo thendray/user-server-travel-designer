@@ -39,7 +39,8 @@ object Main extends zio.ZIOAppDefault {
       userRoutes.reg(),
       userRoutes.get(),
       userRoutes.update(),
-      userRoutes.log()
+      userRoutes.log(),
+      userRoutes.delete()
     )
       .map(_.tag("Users"))
 
