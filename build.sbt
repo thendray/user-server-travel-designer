@@ -9,7 +9,7 @@ val tapirVersion = "1.7.3"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "server-travel-designer"
+    name := "user-server-travel-designer"
   )
 
 libraryDependencies ++= Seq(
@@ -62,4 +62,4 @@ assembly / assemblyMergeStrategy := {
   case x => MergeStrategy.first
 }
 
-assembly / assemblyJarName := "travel-designer.jar"
+assembly / assemblyJarName := "user-travel-designer.jar"
