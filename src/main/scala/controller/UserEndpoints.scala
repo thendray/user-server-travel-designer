@@ -8,7 +8,7 @@ import sttp.tapir.json.circe._
 
 class UserEndpoints() {
 
-  private val baseEndpoint = endpoint.in("api" / "v1" / "users")
+  private val baseEndpoint = endpoint.in("api" / "users")
 
   val registerEndpoint =
     baseEndpoint

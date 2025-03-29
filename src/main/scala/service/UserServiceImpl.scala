@@ -16,7 +16,8 @@ class UserServiceImpl(userDao: UserDaoImpl) {
       _ <- userDao.addUser(newUser).mapError(e => DbProblem(e.getMessage))
       userOpt <- userDao.getUserByEmail(newUser.email).orElseFail(EmailAlreadyExists(""))
       user = userOpt.get
-      response = AuthResponse(user.id, newUser.email, newUser.username)
+      jwt <- JwtService.createToken(user.id.toString).mapError(e => DbProblem(e.getMessage))
+      response = AuthResponse(user.id, jwt.token)
     } yield response
   }
 
@@ -26,8 +27,8 @@ class UserServiceImpl(userDao: UserDaoImpl) {
       user <- ZIO.fromOption(userOpt).orElseFail(InvalidCredentials(request.email))
 
       _ <- ZIO.fail(InvalidCredentials(request.email)).when(user.password != request.password)
-
-      response = AuthResponse(user.id, user.email, user.username)
+      jwt <- JwtService.createToken(user.id.toString).mapError(e => DbProblem(e.getMessage))
+      response = AuthResponse(user.id, jwt.token)
     } yield response
   }
 
@@ -85,8 +86,7 @@ object UserServiceImpl {
 
   case class AuthResponse(
       userId: Int,
-      email: String,
-      username: String)
+      jwt: String)
 
   case class UserResponse(
       userId: Int,

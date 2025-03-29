@@ -47,7 +47,8 @@ libraryDependencies ++= Seq(
 
   "org.apache.directory.studio" % "org.apache.commons.io" % "2.4",
 
-  "joda-time" % "joda-time" % "2.9.3"
+  "joda-time" % "joda-time" % "2.9.3",
+  "com.auth0" % "java-jwt" % "4.4.0"
 
 )
 
