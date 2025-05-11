@@ -34,7 +34,8 @@ object UserDaoImplSpec extends ZIOSpecDefault {
   private def cleanTable =
     for {
       xa <- ZIO.service[Transactor[Task]]
-      _ <- sql" DELETE FROM users ".update.run.transact(xa)
+      _ <- sql"TRUNCATE TABLE users RESTART IDENTITY CASCADE ".update.run.transact(xa)
+      _ = println("clean table")
     } yield ()
 
   def initTable =
@@ -60,6 +61,7 @@ object UserDaoImplSpec extends ZIOSpecDefault {
         dao <- ZIO.service[UserDaoImpl]
         insertCount <- dao.addUser(testUser)
         retrievedUser <- dao.getUserByEmail("test@example.com")
+        _ <- cleanTable
       } yield assert(insertCount)(equalTo(1)) &&
         assert(retrievedUser.map(_.email))(isSome(equalTo("test@example.com"))) &&
         assert(retrievedUser.map(_.username))(isSome(equalTo("testuser")))
@@ -80,6 +82,7 @@ object UserDaoImplSpec extends ZIOSpecDefault {
         userByEmail <- dao.getUserByEmail("get@example.com")
         userId = userByEmail.map(_.id).get
         retrievedUser <- dao.getUser(userId)
+        _ <- cleanTable
       } yield assert(retrievedUser.map(_.email))(isSome(equalTo("get@example.com"))) &&
         assert(retrievedUser.map(_.username))(isSome(equalTo("getuser")))
     },
@@ -107,6 +110,7 @@ object UserDaoImplSpec extends ZIOSpecDefault {
         )
         updateCount <- dao.updateUser(updatedUser)
         retrievedUser <- dao.getUser(userId)
+        _ <- cleanTable
       } yield assert(updateCount)(equalTo(1)) &&
         assert(retrievedUser.map(_.email))(isSome(equalTo("updated@example.com"))) &&
         assert(retrievedUser.map(_.username))(isSome(equalTo("updateduser")))
@@ -128,10 +132,11 @@ object UserDaoImplSpec extends ZIOSpecDefault {
         userId = userByEmail.map(_.id).get
         deleteCount <- dao.deleteUser(userId)
         retrievedUser <- dao.getUser(userId)
+        _ <- cleanTable
       } yield assert(deleteCount)(equalTo(1)) &&
         assert(retrievedUser.map(_.email))(isSome(equalTo("deleted")))
     }
   )
-      @@ beforeAll(initTable) @@ after(cleanTable) @@ sequential)
+      @@ beforeAll(initTable) @@ sequential)
       .provide(xa, UserDaoImpl.live, postgresTestContainer, defaultSettings)
 }
