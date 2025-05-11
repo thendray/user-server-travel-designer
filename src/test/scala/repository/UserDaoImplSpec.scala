@@ -10,7 +10,7 @@ import doobie.implicits._
 import doobie.util.transactor.Transactor
 import io.github.scottweaver.models.JdbcInfo
 import io.github.scottweaver.zio.testcontainers.postgres.ZPostgreSQLContainer
-import zio.test.TestAspect.{after, beforeAll, sequential}
+import zio.test.TestAspect.{after, before, sequential}
 
 object UserDaoImplSpec extends ZIOSpecDefault {
 
@@ -51,7 +51,7 @@ object UserDaoImplSpec extends ZIOSpecDefault {
     test("addUser should add new user to the database") {
       val testUser = User(
         id = 0,
-        email = "test@example.com",
+        email = "test1@example.com",
         username = "testuser",
         password = "password123",
         profilePhoto = "http://example.com/photo.jpg"
@@ -70,7 +70,7 @@ object UserDaoImplSpec extends ZIOSpecDefault {
     test("getUser should return the user with the specified id") {
       val testUser = User(
         id = 0,
-        email = "get@example.com",
+        email = "get2@example.com",
         username = "getuser",
         password = "password123",
         profilePhoto = "None"
@@ -79,11 +79,11 @@ object UserDaoImplSpec extends ZIOSpecDefault {
       for {
         dao <- ZIO.service[UserDaoImpl]
         insertCount <- dao.addUser(testUser)
-        userByEmail <- dao.getUserByEmail("get@example.com")
+        userByEmail <- dao.getUserByEmail("get2@example.com")
         userId = userByEmail.map(_.id).get
         retrievedUser <- dao.getUser(userId)
         _ <- cleanTable
-      } yield assert(retrievedUser.map(_.email))(isSome(equalTo("get@example.com"))) &&
+      } yield assert(retrievedUser.map(_.email))(isSome(equalTo("get2@example.com"))) &&
         assert(retrievedUser.map(_.username))(isSome(equalTo("getuser")))
     },
 
@@ -137,6 +137,6 @@ object UserDaoImplSpec extends ZIOSpecDefault {
         assert(retrievedUser.map(_.email))(isSome(equalTo("deleted")))
     }
   )
-      @@ beforeAll(initTable) @@ sequential)
+      @@ before(initTable) @@ sequential)
       .provide(xa, UserDaoImpl.live, postgresTestContainer, defaultSettings)
 }
