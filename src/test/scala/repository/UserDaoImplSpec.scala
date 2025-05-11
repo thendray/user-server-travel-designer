@@ -10,7 +10,7 @@ import doobie.implicits._
 import doobie.util.transactor.Transactor
 import io.github.scottweaver.models.JdbcInfo
 import io.github.scottweaver.zio.testcontainers.postgres.ZPostgreSQLContainer
-import zio.test.TestAspect.{after, before, sequential}
+import zio.test.TestAspect.{after, beforeAll, sequential}
 
 object UserDaoImplSpec extends ZIOSpecDefault {
 
@@ -132,6 +132,6 @@ object UserDaoImplSpec extends ZIOSpecDefault {
         assert(retrievedUser.map(_.email))(isSome(equalTo("deleted")))
     }
   )
-      @@ before(initTable) @@ after(cleanTable) @@ sequential)
+      @@ beforeAll(initTable) @@ after(cleanTable) @@ sequential)
       .provide(xa, UserDaoImpl.live, postgresTestContainer, defaultSettings)
 }
