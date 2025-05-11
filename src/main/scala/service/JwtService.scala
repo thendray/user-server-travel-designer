@@ -58,14 +58,12 @@ object JwtService {
       }
   }
 
-  // Проверка валидности токена (не истек ли срок)
   def isTokenValid(token: String): Task[Boolean] = {
     verifyToken(token)
       .map(_ => true)
       .catchAll(_ => ZIO.succeed(false))
   }
 
-  // Получение оставшегося времени жизни токена (в секундах)
   def getRemainingTime(token: String): Task[Long] = {
     verifyToken(token).map { payload =>
       val now = Instant.now().getEpochSecond
@@ -75,7 +73,6 @@ object JwtService {
   }
 }
 
-// Модели для работы с токенами
 case class TokenInfo(
     token: String,
     expiresAt: Long,

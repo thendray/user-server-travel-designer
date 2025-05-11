@@ -15,6 +15,10 @@ lazy val root = (project in file("."))
 libraryDependencies ++= Seq(
   "dev.zio" %% "zio" % "2.0.13",
   "dev.zio" %% "zio-streams" % "2.0.13",
+  "dev.zio" %% "zio-test" % "2.0.21" % Test,
+  "dev.zio" %% "zio-test-sbt" % "2.0.21" % Test,
+  "io.github.scottweaver" %% "zio-2-0-testcontainers-postgresql" % "0.10.0",
+
 
   "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.2.10",
   "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % tapirVersion,
@@ -48,7 +52,9 @@ libraryDependencies ++= Seq(
   "org.apache.directory.studio" % "org.apache.commons.io" % "2.4",
 
   "joda-time" % "joda-time" % "2.9.3",
-  "com.auth0" % "java-jwt" % "4.4.0"
+  "com.auth0" % "java-jwt" % "4.4.0",
+  "software.amazon.awssdk" % "s3" % "2.20.120",
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0"
 
 )
 

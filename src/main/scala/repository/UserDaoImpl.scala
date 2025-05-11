@@ -18,7 +18,7 @@ class UserDaoImpl(transactor: Transactor[Task]) {
 
   def deleteUser(id: Int): Task[Int] = {
     sql"""
-      DELETE FROM users WHERE id = $id
+      UPDATE users SET email = 'deleted' WHERE id = $id
     """.update.run.transact(transactor)
   }
 
