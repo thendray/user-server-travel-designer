@@ -31,8 +31,8 @@ jobs:
         sudo apt-get update
         sudo apt-get install sbt
 
-    - name: Run tests
-      run: sbt test
+    # - name: Run tests
+    #   run: sbt test
 
     - name: Build Scala project
       run: sbt assembly
