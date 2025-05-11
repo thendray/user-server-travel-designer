@@ -1,5 +1,6 @@
 package repository
 
+import test.InitSchema
 import model.User
 import zio._
 import zio.test._
@@ -9,6 +10,7 @@ import doobie.implicits._
 import doobie.util.transactor.Transactor
 import io.github.scottweaver.models.JdbcInfo
 import io.github.scottweaver.zio.testcontainers.postgres.ZPostgreSQLContainer
+import zio.test.TestAspect.{after, before, sequential}
 
 object UserDaoImplSpec extends ZIOSpecDefault {
 
@@ -29,7 +31,22 @@ object UserDaoImplSpec extends ZIOSpecDefault {
     }
   }
 
-  def spec = suite("UserDaoImpl")(
+  private def cleanTable =
+    for {
+      xa <- ZIO.service[Transactor[Task]]
+      _ <- sql" DELETE FROM users ".update.run.transact(xa)
+    } yield ()
+
+  def initTable =
+    ZIO.serviceWithZIO[Transactor[Task]] { xa =>
+      for {
+        _ <- InitSchema.apply("/users.sql", xa)
+        _ = println("схема готова!")
+      } yield ()
+    }
+
+  def spec =
+    (suite("UserDaoImpl")(
     test("addUser should add new user to the database") {
       val testUser = User(
         id = 0,
@@ -114,5 +131,7 @@ object UserDaoImplSpec extends ZIOSpecDefault {
       } yield assert(deleteCount)(equalTo(1)) &&
         assert(retrievedUser.map(_.email))(isSome(equalTo("deleted")))
     }
-  ).provide(xa, UserDaoImpl.live)
+  )
+      @@ before(initTable) @@ after(cleanTable) @@ sequential)
+      .provide(xa, UserDaoImpl.live, postgresTestContainer, defaultSettings)
 }
